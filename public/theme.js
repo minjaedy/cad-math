@@ -1,0 +1,1 @@
+(()=>{try{const pref=localStorage.getItem('cad-math-theme-v1')||'system';document.documentElement.dataset.theme=pref==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):pref;}catch{document.documentElement.dataset.theme='light';}})();

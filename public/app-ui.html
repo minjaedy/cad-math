@@ -1,0 +1,23 @@
+<dialog id="install-dialog" aria-labelledby="install-title">
+ <div class="dialog-head"><h2 id="install-title">CAD 수학 앱 설치</h2><button data-close="install-dialog" aria-label="설치 안내 닫기">×</button></div>
+ <img src="./icons/icon-192.png" class="install-art" alt="CAD 수학 앱 아이콘" width="88" height="88">
+ <p id="install-instruction"></p><p class="install-hint">오프라인 교재 저장이 완료되면 인터넷 없이도 학습할 수 있어요. 답안과 노트는 기기에 먼저 저장하고, 연결되면 서버에 동기화합니다. 중요한 기록은 ‘학습 기록 저장’으로 보관해 주세요.</p><p id="offline-status" role="status"></p>
+</dialog>
+<div id="app-toast" class="app-toast" role="status" hidden></div>
+<dialog id="sync-dialog" aria-labelledby="sync-title">
+ <div class="dialog-head"><h2 id="sync-title">나의 학습 공간</h2><button data-close="sync-dialog" aria-label="연결 창 닫기">×</button></div>
+ <p id="sync-status" role="status">학습 기록을 확인하고 있어요.</p>
+ <p class="install-hint">아이폰·아이패드에서 같은 학습 링크를 열면 진도, 답안, 풀이 노트를 이어서 사용할 수 있어요. 로그인이나 회원가입은 없어요.</p>
+ <div id="sync-open-link"><label for="sync-link-input">공유 학습 링크</label><input id="sync-link-input" type="url" autocomplete="off" placeholder="다른 기기에서 복사한 학습 링크"><button id="sync-connect" class="primary">내 학습 기록 연결</button></div>
+ <button id="sync-copy" class="primary">다른 기기로 연결할 링크 복사</button><textarea id="sync-link-output" aria-label="공유 학습 링크" readonly hidden></textarea>
+ <button id="sync-retry" class="secondary">지금 동기화</button>
+ <p class="install-hint">공유 링크로 내 기록에 접근할 수 있어요. 본인의 기기에서만 사용해 주세요. 연결이 끊겨도 이 기기에 먼저 저장하고, 다시 연결되면 서버에 저장해요.</p>
+</dialog>
+<dialog id="reminder-dialog" aria-labelledby="reminder-title">
+ <div class="dialog-head"><h2 id="reminder-title">매일의 공부 알림</h2><button data-close="reminder-dialog" aria-label="알림 설정 닫기">×</button></div>
+ <div class="reminder-times"><div><span>공부할 시간</span><strong>오전 11:00</strong></div><div><span>미완료일 때만 알림</span><strong>오후 10:00</strong></div></div>
+ <p id="reminder-message" role="status"></p><button id="reminder-enable" class="primary">이 기기에 알림 켜기</button><button id="reminder-disable" class="text-button">이 기기 알림 끄기</button>
+ <p class="install-hint">한국 시간 기준이에요. 오늘 목표를 끝내고 서버에 저장되면 알림을 보내지 않아요. 기기마다 알림 권한을 한 번 허용해 주세요.</p>
+</dialog>
+<div id="sync-state" class="sync-state" role="status"></div>
+<div id="update-banner" class="update-banner" hidden><span>새 버전이 준비됐어요.</span><button id="update-now">업데이트</button><button id="update-later" aria-label="업데이트 안내 닫기">×</button></div>

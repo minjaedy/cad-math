@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.firebase/
+firebase-debug.log*
+*-debug.log
+.env*
+*.local
+test-results/
+*service-account*.json
+*credential*.json
+
+.wrangler/
+.dev.vars*

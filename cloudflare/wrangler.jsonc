@@ -1,0 +1,10 @@
+{
+  "name": "cad-math-service",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-03",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "triggers": {"crons": ["*/5 * * * *"]},
+  "d1_databases": [{"binding":"DB","database_name":"cad-math-service","database_id":"f2394974-7580-48bc-8200-78b058f5003b"}],
+  "vars": {"APP_ORIGIN":"https://minjaedy.github.io","APP_URL":"https://minjaedy.github.io/cad-math/","FIREBASE_URL":"https://cad-math-minjaedy-default-rtdb.asia-southeast1.firebasedatabase.app"}
+}
