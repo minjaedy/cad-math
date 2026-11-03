@@ -17,8 +17,8 @@ def extract_font(m):
     (fonts/name).write_bytes(raw)
     return 'url(./fonts/'+name+')'
 css=re.sub(r'url\(data:font/woff2;base64,([^)]*)\)',extract_font,css)
-html=re.sub(r'<style[^>]*>[\s\S]*?</style>','<link rel="stylesheet" href="./textbook.css"><link rel="stylesheet" href="./app.css"><link rel="stylesheet" href="./study.css">',original,count=1)
-html=re.sub(r'<script[^>]*>[\s\S]*?</script>','<script src="./study-core.js" defer></script><script src="./book-data.js" defer></script><script src="./workbook-data.js" defer></script><script src="./study-plan.js" defer></script><script src="./textbook.js" defer></script><script src="./app.js" defer></script><script src="./service-config.js" defer></script><script src="./cloud-sync.js" defer></script>',html,count=1)
+html=re.sub(r'<style[^>]*>[\s\S]*?</style>','<link rel="stylesheet" href="./textbook.css"><link rel="stylesheet" href="./app.css"><link rel="stylesheet" href="./study.css"><link rel="stylesheet" href="./concept-reader.css">',original,count=1)
+html=re.sub(r'<script[^>]*>[\s\S]*?</script>','<script src="./study-core.js" defer></script><script src="./book-data.js" defer></script><script src="./workbook-data.js" defer></script><script src="./study-plan.js" defer></script><script src="./concept-data.js" defer></script><script src="./textbook.js" defer></script><script src="./app.js" defer></script><script src="./service-config.js" defer></script><script src="./cloud-sync.js" defer></script>',html,count=1)
 html=html.replace('width=device-width,initial-scale=1','width=device-width,initial-scale=1,viewport-fit=cover')
 head='''<meta name="app-version" content="VERSION"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="CAD 수학"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" type="image/png" sizes="32x32" href="./icons/icon-32.png"><link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png"><link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png"><script src="./theme.js"></script>'''
 html=html.replace('</head>',head+'</head>')
@@ -45,6 +45,7 @@ logic=logic.replace('현재 브라우저에 저장됩니다. 중요한 기록은
 logic=logic.replace("['unit','home','prep','mistakes']", "['unit','home','prep','mistakes','daily','bank']")
 logic=logic.replace("if(state.view==='home')html=home();", "if(state.view==='home')html=dailyHome();else if(state.view==='daily')html=dailyLesson();else if(state.view==='bank')html=workbookHome();")
 logic=logic.replace('function home(){','function courseCatalogue(){')
+logic=logic.replace('function learn(u){','function originalLearn(u){')
 logic=logic.replace('restore();save();}', 'restore();save();dailyAfterRender();}')
 logic=logic.replace('nav();const count=', 'dailyCheckProgress();nav();const count=')
 logic=logic.replace("for(const k of ['drafts','notes','results'])state[k]={...state[k],...clean[k]};render();", "for(const k of ['drafts','notes','results'])state[k]={...state[k],...clean[k]};if(data.daily){const d=cleanDaily(data.daily);for(const k of ['checks','completed','days'])state.daily[k]={...state.daily[k],...d[k]};}render();")
@@ -57,14 +58,14 @@ logic=logic.replace('네 가지 상황을 함께 풀어봅니다.', '풀이 과�
 logic=logic.replace('기본 3문제로 계산을 익히고, 응용 3문제로 조건을 해석합니다. 마지막 심화 2문제는 여러 관점을 연결하거나 이유를 설명하는 문제입니다.', '기본·응용·심화 문제로 단계적으로 연습해요. 숫자 답은 자동 채점하고, 서술형은 풀이와 기준표를 비교해 자기점검합니다.')
 logic=logic.replace("function save(){", "function save(){window.CadMath?.changed();")
 end=logic.rfind('render();')
-logic=logic[:end]+(ROOT/'public/study-adapter.js').read_text(encoding='utf-8')+'\n'+logic[end:]
+logic=logic[:end]+(ROOT/'public/concept-reader.js').read_text(encoding='utf-8')+'\n'+(ROOT/'public/study-adapter.js').read_text(encoding='utf-8')+'\n'+logic[end:]
 html=html.replace('<div class="topbar-actions">', '<div class="topbar-actions"><button id="study-home-button" aria-label="오늘의 학습">오늘</button><button id="focus-button" aria-pressed="false">집중</button>')
 html=html.replace('<button id="install-button"', '<button id="install-button"')
 
 for name,value in [('index.html',html),('textbook.css',css),('book-data.js',data),('textbook.js',logic),('textbook-offline.html',original)]:
     (DIST/name).write_text(value,encoding='utf-8',newline='\n')
 for p in (ROOT/'public').rglob('*'):
-    if p.is_file() and p.name not in ['app-ui.html','sw-template.js','study-adapter.js']:
+    if p.is_file() and p.name not in ['app-ui.html','sw-template.js','study-adapter.js','concept-reader.js']:
         target=DIST/p.relative_to(ROOT/'public');target.parent.mkdir(parents=True,exist_ok=True)
         if p.suffix in ['.js','.css','.html','.json','.webmanifest','.svg']:
             target.write_text(p.read_text(encoding='utf-8-sig'),encoding='utf-8',newline='\n')
@@ -73,6 +74,7 @@ for p in (ROOT/'public').rglob('*'):
 
 subprocess.run(['node',str(ROOT/'scripts/expand.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'scripts/plan.cjs')],check=True)
+subprocess.run(['node',str(ROOT/'scripts/concepts.cjs')],check=True)
 
 digest=hashlib.sha256((ROOT/'public/sw-template.js').read_text(encoding='utf-8').encode())
 for p in sorted(DIST.rglob('*')):

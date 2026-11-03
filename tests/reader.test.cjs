@@ -5,7 +5,7 @@ function reader(storage={}){
  const dom=new JSDOM(read('index.html'),{url:'https://example.test/cad-math/',runScripts:'outside-only'}),w=dom.window;
  w.scrollTo=()=>{};for(const[k,v]of Object.entries(storage))w.localStorage.setItem(k,v);
  w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
- for(const n of ['study-core.js','book-data.js','workbook-data.js','study-plan.js','textbook.js'])vm.runInContext(read(n),dom.getInternalVMContext());
+ for(const n of ['study-core.js','book-data.js','workbook-data.js','study-plan.js','concept-data.js','textbook.js'])vm.runInContext(read(n),dom.getInternalVMContext());
  return dom;
 }
 test('all 144 original lessons and formatted content are preserved exactly',()=>{
