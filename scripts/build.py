@@ -62,23 +62,26 @@ html=html.replace('<div class="topbar-actions">', '<div class="topbar-actions"><
 html=html.replace('<button id="install-button"', '<button id="install-button"')
 
 for name,value in [('index.html',html),('textbook.css',css),('book-data.js',data),('textbook.js',logic),('textbook-offline.html',original)]:
-    (DIST/name).write_text(value,encoding='utf-8')
+    (DIST/name).write_text(value,encoding='utf-8',newline='\n')
 for p in (ROOT/'public').rglob('*'):
     if p.is_file() and p.name not in ['app-ui.html','sw-template.js','study-adapter.js']:
-        target=DIST/p.relative_to(ROOT/'public');target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,target)
+        target=DIST/p.relative_to(ROOT/'public');target.parent.mkdir(parents=True,exist_ok=True)
+        if p.suffix in ['.js','.css','.html','.json','.webmanifest','.svg']:
+            target.write_text(p.read_text(encoding='utf-8-sig'),encoding='utf-8',newline='\n')
+        else:shutil.copyfile(p,target)
 
 
 subprocess.run(['node',str(ROOT/'scripts/expand.cjs')],check=True)
 subprocess.run(['node',str(ROOT/'scripts/plan.cjs')],check=True)
 
-digest=hashlib.sha256((ROOT/'public/sw-template.js').read_bytes())
+digest=hashlib.sha256((ROOT/'public/sw-template.js').read_text(encoding='utf-8').encode())
 for p in sorted(DIST.rglob('*')):
     if p.is_file() and p.name not in ['app-sw.js','version.json']:digest.update(p.relative_to(DIST).as_posix().encode()+p.read_bytes())
 version='20261103-'+digest.hexdigest()[:12]
-(DIST/'index.html').write_text(html.replace('VERSION',version),encoding='utf-8')
-(DIST/'version.json').write_text(json.dumps({'version':version}),encoding='utf-8')
+(DIST/'index.html').write_text(html.replace('VERSION',version),encoding='utf-8',newline='\n')
+(DIST/'version.json').write_text(json.dumps({'version':version}),encoding='utf-8',newline='\n')
 assets=['./'+p.relative_to(DIST).as_posix() for p in sorted(DIST.rglob('*')) if p.is_file() and p.name not in ['app-sw.js','textbook-offline.html']]
 sw=(ROOT/'public/sw-template.js').read_text(encoding='utf-8').replace('__VERSION__',version).replace('__ASSETS__',json.dumps(assets))
-(DIST/'app-sw.js').write_text(sw,encoding='utf-8')
+(DIST/'app-sw.js').write_text(sw,encoding='utf-8',newline='\n')
 (DIST/'.nojekyll').touch()
 print('Built',version,'-',len(assets),'offline assets; original textbook preserved.')
